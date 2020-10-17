@@ -26,7 +26,7 @@ public class ExecUtil {
 
 			final int exitCode = process.waitFor();
 
-			return new Result(output.toString(), exitCode);
+			return new Result(exitCode, output.toString());
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

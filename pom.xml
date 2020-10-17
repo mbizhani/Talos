@@ -91,6 +91,30 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.0.0</version>
+
+				<configuration>
+					<executable>bash</executable>
+					<arguments>
+						<argument>${basedir}/.build-script.sh</argument>
+						<argument>${project.artifactId}</argument>
+						<argument>${project.version}</argument>
+					</arguments>
+				</configuration>
+
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 </project>

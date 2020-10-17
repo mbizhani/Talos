@@ -5,5 +5,11 @@ public enum VMCommand {
 	getGuestIPAddress,
 	list,
 	start,
-	stop
+	stop,
+
+	createDirectoryInGuest,
+	fileExistsInGuest,
+	deleteFileInGuest,
+	copyFileFromHostToGuest,
+	copyFileFromGuestToHost
 }

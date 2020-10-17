@@ -16,6 +16,7 @@ public class App {
 
 		new CommandLine(new TalosCommand())
 			.addSubcommand(new CClone(context))
+			.addSubcommand(new CCopy(context))
 			.addSubcommand(new CList(context))
 			.addSubcommand(new CPs(context))
 			.addSubcommand(new CScan(context))

@@ -57,7 +57,7 @@ public class CSsh extends CAbstract {
 		final String pass = username != null ? password : ssh.getPass();
 
 		if (persist && user != null) {
-			printVerbose("Persist username and password for VM name=[%s]", name);
+			printVerbose("Persist username and password of SSH for VM name=[%s]", name);
 			vmInfo.setSsh(new XUser(user, pass));
 			context.flush();
 		}
