@@ -11,10 +11,9 @@ import picocli.CommandLine.Parameters;
 
 import java.io.File;
 
-import static org.devocative.talos.vmware.VMCommand.copyFileFromHostToGuest;
-import static org.devocative.talos.vmware.VMCommand.createDirectoryInGuest;
+import static org.devocative.talos.vmware.VMCommand.*;
 
-@Command(name = "copy")
+@Command(name = "cp")
 public class CCopy extends CAbstract {
 
 	@Parameters(paramLabel = "SRC", description = "Source File (NAME:FILE for guest)")
@@ -43,8 +42,7 @@ public class CCopy extends CAbstract {
 	@Override
 	public void run() {
 		if (src.contains(":") && dest.contains(":")) {
-			System.err.println("One must have ':'");
-			System.exit(1);
+			error("Source/Destination must address a VM in format of 'NAME:'");
 		}
 
 		if (src.contains(":")) {
@@ -54,8 +52,7 @@ public class CCopy extends CAbstract {
 				final String fileOnGuest = split[1];
 				copyFileFromGuestToHost(name, dest, fileOnGuest);
 			} else {
-				System.err.println("Invalid src");
-				System.exit(1);
+				error("Invalid src");
 			}
 		} else if (dest.contains(":")) {
 			final String[] split = dest.split("[:]");
@@ -64,12 +61,10 @@ public class CCopy extends CAbstract {
 				final String fileOnGuest = split[1];
 				copyFileFromHostToGuest(name, src, fileOnGuest);
 			} else {
-				System.err.println("Invalid dest");
-				System.exit(1);
+				error("Invalid dest");
 			}
 		} else {
-			System.err.println("Invalid src and dest");
-			System.exit(1);
+			error("Invalid src and dest");
 		}
 	}
 
@@ -104,12 +99,37 @@ public class CCopy extends CAbstract {
 				.assertSuccess();
 
 		} else {
-			System.err.println("Invalid file on host: " + fileOnHost);
+			error("Invalid file on host: [%s]", fileOnHost);
 		}
 	}
 
-	private void copyFileFromGuestToHost(String name, String fileOnHost, String fileOnGuest) {
-		printVerbose("Copy-FromGuestToHost: name=[%s] guest=[%s] > host=[%s]", name, fileOnGuest, fileOnHost);
+	private void copyFileFromGuestToHost(String name, String dirOnHost, String fileOnGuest) {
+		printVerbose("Copy-FromGuestToHost: name=[%s] guest=[%s] > host=[%s]", name, fileOnGuest, dirOnHost);
+
+		final File dHost = new File(dirOnHost);
+		if (dHost.exists() && dHost.isFile()) {
+			error("Invalid directory on host: [%s]", dirOnHost);
+		}
+
+		dHost.mkdirs();
+
+		final String[] fileOnGuestParts = fileOnGuest.split("[/\\\\]");
+		final String fileNameOnGuest = fileOnGuestParts[fileOnGuestParts.length - 1];
+		printVerbose("Filename on guest: [%s]", fileNameOnGuest);
+
+		final String fileOnHost = dHost.getAbsolutePath() + File.separator + fileNameOnGuest;
+
+		final File vmx = context.getVmx(name);
+		final XUser user = getUser(name);
+
+		VMRun
+			.of(copyFileFromGuestToHost)
+			.vmxFile(vmx)
+			.guestUser(user.getUser())
+			.guestPass(user.getPass())
+			.options(fileOnGuest, fileOnHost)
+			.call()
+			.assertSuccess();
 	}
 
 	private XUser getUser(String name) {

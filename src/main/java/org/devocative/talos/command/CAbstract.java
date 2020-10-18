@@ -13,7 +13,7 @@ abstract class CAbstract implements Runnable {
 
 	// ------------------------------
 
-	protected void printVerbose(String str, Object... args) {
+	void printVerbose(String str, Object... args) {
 		if (verbose) {
 			if (args == null) {
 				System.out.println(str);
@@ -21,5 +21,19 @@ abstract class CAbstract implements Runnable {
 				System.out.printf(str + "\n", args);
 			}
 		}
+	}
+
+	void error(String str, Object... args) {
+		error(1, str, args);
+	}
+
+	void error(Integer exitCode, String str, Object... args) {
+		if (args == null) {
+			System.err.println(str);
+		} else {
+			System.err.printf(str + "\n", args);
+		}
+
+		System.exit(exitCode == null ? 1 : exitCode);
 	}
 }

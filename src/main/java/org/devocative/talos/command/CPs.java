@@ -27,10 +27,7 @@ public class CPs extends CAbstract {
 		for (int i = 1; i < lines.length; i++) {
 			String vmxAddr = lines[i];
 			final String name = context.findNameByVMX(vmxAddr).orElse("- N/A -");
-			final Result ipResult = VMRun
-				.of(VMCommand.getGuestIPAddress)
-				.vmxFile(new File(vmxAddr))
-				.call();
+			final Result ipResult = VMRun.getIpOf(new File(vmxAddr));
 			final String ip = ipResult.isSuccessful() ? ipResult.getOutput() : "";
 			System.out.printf("%-10s %-15s %s\n", name, ip.trim(), vmxAddr);
 		}

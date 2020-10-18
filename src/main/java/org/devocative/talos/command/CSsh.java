@@ -4,7 +4,6 @@ import com.jediterm.ssh.jsch.JSchShellTtyConnector;
 import com.jediterm.terminal.TtyConnector;
 import com.jediterm.terminal.ui.AbstractTerminalFrame;
 import org.devocative.talos.Context;
-import org.devocative.talos.vmware.VMCommand;
 import org.devocative.talos.vmware.VMRun;
 import org.devocative.talos.xml.XUser;
 import org.devocative.talos.xml.XVmInfo;
@@ -47,9 +46,7 @@ public class CSsh extends CAbstract {
 		printVerbose("Getting IP for VM: name=[%s] vmx=[%s]", vmInfo.getName(), vmInfo.getVmxAddr());
 
 		final String hostname = VMRun
-			.of(VMCommand.getGuestIPAddress)
-			.vmxFile(new File(vmInfo.getVmxAddr()))
-			.call()
+			.getIpOf(new File(vmInfo.getVmxAddr()))
 			.assertSuccess()
 			.trim();
 		final XUser ssh = vmInfo.getSshSafely();

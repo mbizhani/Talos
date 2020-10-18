@@ -32,21 +32,18 @@ public class CScan extends CAbstract {
 		try {
 			final File file = dir.getCanonicalFile();
 			if (!file.exists()) {
-				System.err.printf("'%s' not exists\n", file.getAbsolutePath());
-				return;
-
+				error("'%s' not exists", file.getAbsolutePath());
 			}
 
 			if (!file.isDirectory()) {
-				System.err.printf("'%s' must be a directory\n", file.getAbsolutePath());
-				return;
+				error("'%s' must be a directory", file.getAbsolutePath());
 			}
 
 			System.out.printf("Start scanning from directory '%s' ...\n", file.getAbsolutePath());
 			processDir(file);
 
 			if (foundVmxFile == 0) {
-				System.err.println("No VMX File Found!");
+				System.out.println("No VMX File Found!");
 			} else {
 				System.out.printf("[%s] VMX Found, [%s] Newly Added\n", foundVmxFile, foundNewVmxFile);
 				if (foundNewVmxFile > 0) {

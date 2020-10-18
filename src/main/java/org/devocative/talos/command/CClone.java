@@ -61,7 +61,7 @@ public class CClone extends CAbstract {
 
 			context.flush();
 		} else {
-			System.err.println(rs.getOutput());
+			error(rs.getOutput());
 		}
 	}
 }

@@ -25,6 +25,14 @@ public class VMRun implements Callable<Result> {
 		return new VMRun(vmCmd);
 	}
 
+	public static Result getIpOf(File vmxFile) {
+		return VMRun
+			.of(VMCommand.getGuestIPAddress)
+			.vmxFile(vmxFile)
+			.options("-wait")
+			.call();
+	}
+
 	// ------------------------------
 
 	@Override

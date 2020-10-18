@@ -39,7 +39,7 @@ public class CStop extends CAbstract {
 			if (rs.isSuccessful()) {
 				System.out.println("VM Stopped Successfully");
 			} else {
-				System.err.println(rs.getOutput());
+				error(rs.getOutput());
 			}
 		}
 	}

@@ -34,13 +34,13 @@ public class CStart extends CAbstract {
 			final Result rs = VMRun
 				.of(VMCommand.start)
 				.vmxFile(vmx)
-				//.options("nogui")
+				.options("nogui")
 				.call();
 
 			if (rs.isSuccessful()) {
 				printVerbose("VM Started Successfully");
 			} else {
-				System.err.println("Error: " + rs.getOutput());
+				error("Error: " + rs.getOutput());
 			}
 		}
 	}
