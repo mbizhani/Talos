@@ -1,6 +1,7 @@
 package org.devocative.talos.command;
 
 import org.devocative.talos.Context;
+import org.devocative.talos.Paraller;
 import org.devocative.talos.vmware.Result;
 import org.devocative.talos.vmware.VMCommand;
 import org.devocative.talos.vmware.VMRun;
@@ -24,12 +25,19 @@ public class CPs extends CAbstract {
 
 		System.out.printf("%-10s %-15s %s\n", "NAME", "IP", "VMX ADDRESS");
 
+		final Paraller<String> paraller = new Paraller<>(3);
+
 		for (int i = 1; i < lines.length; i++) {
-			String vmxAddr = lines[i];
-			final String name = context.findNameByVMX(vmxAddr).orElse("- N/A -");
-			final Result ipResult = VMRun.getIpOf(new File(vmxAddr));
-			final String ip = ipResult.isSuccessful() ? ipResult.getOutput() : "";
-			System.out.printf("%-10s %-15s %s\n", name, ip.trim(), vmxAddr);
+			final String vmxAddr = lines[i];
+			paraller.addTask(vmxAddr, () -> {
+				final Result ipResult = VMRun.getIpOf(new File(vmxAddr));
+				return ipResult.isSuccessful() ? ipResult.getOutput().trim() : "";
+			});
 		}
+
+		paraller.execute((vmxAddr, opt) -> {
+			final String name = context.findNameByVMX(vmxAddr).orElse("- N/A -");
+			System.out.printf("%-10s %-15s %s\n", name, opt.orElse("").trim(), vmxAddr);
+		});
 	}
 }

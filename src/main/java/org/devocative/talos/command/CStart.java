@@ -1,6 +1,7 @@
 package org.devocative.talos.command;
 
 import org.devocative.talos.Context;
+import org.devocative.talos.Paraller;
 import org.devocative.talos.vmware.Result;
 import org.devocative.talos.vmware.VMCommand;
 import org.devocative.talos.vmware.VMRun;
@@ -26,22 +27,27 @@ public class CStart extends CAbstract {
 
 	@Override
 	public void run() {
+		final Paraller<Result> paraller = new Paraller<>(0);
+
 		for (String name : names) {
 			final File vmx = context.getVmx(name);
-
 			printVerbose("Starting VM: name=[%s] vmx=[%s]", name, vmx.getAbsolutePath());
 
-			final Result rs = VMRun
+			paraller.addTask(name, () -> VMRun
 				.of(VMCommand.start)
 				.vmxFile(vmx)
 				.options("nogui")
-				.call();
-
-			if (rs.isSuccessful()) {
-				printVerbose("VM Started Successfully");
-			} else {
-				error("Error: " + rs.getOutput());
-			}
+				.call());
 		}
+
+		paraller.execute((name, opt) -> {
+			final Result result = opt.orElseGet(() -> new Result(-1, "CANCELED"));
+
+			if (result.isSuccessful()) {
+				printVerbose("[%s] started successfully", name);
+			} else {
+				error("Error[%s]: [%s]", name, result.getOutput());
+			}
+		});
 	}
 }
