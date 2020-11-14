@@ -70,7 +70,7 @@ public class CSsh extends CAbstract {
 			};
 		} else {
 			//TODO: simple ssh shell
-			System.out.printf("sshpass -p %s ssh %s@%s\n", pass, user, hostname);
+			error("sshpass -p %s ssh %s@%s\n", pass, user, hostname);
 		}
 	}
 }

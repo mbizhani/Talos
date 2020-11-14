@@ -1,6 +1,7 @@
 package org.devocative.talos.command;
 
 import org.devocative.talos.Context;
+import org.devocative.talos.Paraller;
 import org.devocative.talos.vmware.Result;
 import org.devocative.talos.vmware.VMCommand;
 import org.devocative.talos.vmware.VMRun;
@@ -26,21 +27,28 @@ public class CStop extends CAbstract {
 
 	@Override
 	public void run() {
+		final Paraller<Result> paraller = new Paraller<>(0);
+
 		for (String name : names) {
 			final File vmx = context.getVmx(name);
 
-			System.out.printf("Stopping VM: name=[%s] vmx=[%s]\n", name, vmx.getAbsolutePath());
+			printVerbose("Stopping VM: name=[%s] vmx=[%s]\n", name, vmx.getAbsolutePath());
 
-			final Result rs = VMRun
+			paraller.addTask(name, () -> VMRun
 				.of(VMCommand.stop)
 				.vmxFile(vmx)
-				.call();
+				.call()
+			);
 
-			if (rs.isSuccessful()) {
-				System.out.println("VM Stopped Successfully");
-			} else {
-				error(rs.getOutput());
-			}
+			paraller.execute((s, opt) -> {
+				final Result result = opt.orElseGet(() -> new Result(-1, "CANCELED"));
+
+				if (result.isSuccessful()) {
+					printVerbose("[%s] stopped successfully", name);
+				} else {
+					error(result.getOutput());
+				}
+			});
 		}
 	}
 }
