@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.util.Objects;
+
 @Getter
 @Setter
 @Accessors(chain = true)
@@ -29,5 +31,20 @@ public class XVmInfo {
 
 	public XUser getGuestSafely() {
 		return guest == null ? new XUser() : guest;
+	}
+
+	// ---------------
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof XVmInfo)) return false;
+		XVmInfo info = (XVmInfo) o;
+		return Objects.equals(getName(), info.getName());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getName());
 	}
 }

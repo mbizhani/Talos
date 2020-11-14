@@ -104,6 +104,13 @@ public class Context {
 		return root.getCloneBaseDir();
 	}
 
+	public void removeConfig(String vmName) {
+		if (vmMap.containsKey(vmName)) {
+			final XVmInfo removed = vmMap.remove(vmName);
+			root.getVms().remove(removed);
+		}
+	}
+
 	// ------------------------------
 
 	private void update() {
