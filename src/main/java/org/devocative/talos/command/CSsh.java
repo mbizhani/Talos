@@ -1,8 +1,5 @@
 package org.devocative.talos.command;
 
-import com.jediterm.ssh.jsch.JSchShellTtyConnector;
-import com.jediterm.terminal.TtyConnector;
-import com.jediterm.terminal.ui.AbstractTerminalFrame;
 import org.devocative.talos.Context;
 import org.devocative.talos.ssh.MultiSshPanel;
 import org.devocative.talos.ssh.SshInfo;
