@@ -1,6 +1,3 @@
-/**
- *
- */
 package com.jediterm.ssh.jsch;
 
 import com.google.common.net.HostAndPort;
@@ -17,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class JSchTtyConnector<T extends Channel> implements TtyConnector {
@@ -25,7 +23,7 @@ public abstract class JSchTtyConnector<T extends Channel> implements TtyConnecto
 	public static final int DEFAULT_PORT = 22;
 
 	private InputStream myInputStream = null;
-	private OutputStream myOutputStream = null;
+	protected OutputStream myOutputStream = null;
 	private Session mySession;
 	private T myChannelShell;
 	private AtomicBoolean isInitiated = new AtomicBoolean(false);
@@ -96,7 +94,7 @@ public abstract class JSchTtyConnector<T extends Channel> implements TtyConnecto
 			configureChannelShell(myChannelShell);
 			myInputStream = myChannelShell.getInputStream();
 			myOutputStream = myChannelShell.getOutputStream();
-			myInputStreamReader = new InputStreamReader(myInputStream, "utf-8");
+			myInputStreamReader = new InputStreamReader(myInputStream, StandardCharsets.UTF_8);
 			myChannelShell.connect();
 			resizeImmediately();
 			return true;
@@ -187,10 +185,14 @@ public abstract class JSchTtyConnector<T extends Channel> implements TtyConnecto
 		return myInputStreamReader.read(buf, offset, length);
 	}
 
+	/*
+	UNUSED
 	public int read(byte[] buf, int offset, int length) throws IOException {
 		return myInputStream.read(buf, offset, length);
 	}
+	*/
 
+	@Override
 	public void write(byte[] bytes) throws IOException {
 		if (myOutputStream != null) {
 			myOutputStream.write(bytes);
@@ -205,7 +207,7 @@ public abstract class JSchTtyConnector<T extends Channel> implements TtyConnecto
 
 	@Override
 	public void write(String string) throws IOException {
-		write(string.getBytes("utf-8")); //TODO: fix
+		write(string.getBytes(StandardCharsets.UTF_8)); //TODO: fix
 	}
 
 	@Override
