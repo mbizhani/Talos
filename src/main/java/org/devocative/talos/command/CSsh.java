@@ -1,9 +1,11 @@
 package org.devocative.talos.command;
 
+import com.jediterm.ssh.jsch.JSchShellTtyConnector;
+import com.jediterm.terminal.TtyConnector;
+import com.jediterm.terminal.ui.AbstractTerminalFrame;
 import org.devocative.talos.Context;
 import org.devocative.talos.ssh.MultiSshPanel;
 import org.devocative.talos.ssh.SshInfo;
-import org.devocative.talos.ssh.TabbedSshPanel;
 import org.devocative.talos.vmware.VMRun;
 import org.devocative.talos.xml.XUser;
 import org.devocative.talos.xml.XVmInfo;
@@ -70,7 +72,12 @@ public class CSsh extends CAbstract {
 
 		if (sshInfoList.size() == 1) {
 			final SshInfo info = sshInfoList.get(0);
-			new TabbedSshPanel(info);
+			new AbstractTerminalFrame() {
+				@Override
+				public TtyConnector createTtyConnector() {
+					return new JSchShellTtyConnector(info.getHostname(), 22, info.getUser(), info.getPass(), info.getName());
+				}
+			};
 		} else {
 			new MultiSshPanel(sshInfoList);
 		}
