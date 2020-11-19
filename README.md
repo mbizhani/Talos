@@ -18,10 +18,10 @@ and it eases working with all your VMs.
 - Find your main NIC's name using `ip a` command. It may be something like `ens33`.
 - Due to this [link](https://docs.vmware.com/en/VMware-Tools/10.2.0/com.vmware.vsphere.vmwaretools.doc/GUID-ECCF9D01-3666-40CE-B9FD-7EE0738AB5D9.html),
 modify `/etc/vmware-tools/tools.conf` and append following section to enable your physical NIC as default one.
-```
-[guestinfo]
-primary-nics=ens*
-```
+    ```
+    [guestinfo]
+    primary-nics=ens*
+    ```
 - [optional] Install Docker
 
 Now your template VM is ready.
