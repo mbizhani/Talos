@@ -27,7 +27,7 @@ modify `/etc/vmware-tools/tools.conf` and append following section to enable you
 Now your template VM is ready.
 
 ## Installation
-For both compilation from source and execution `OpenJDK`, `OracleJDK` or any valid JDK are required. 
+For both compilation from source and execution `OpenJDK`, `OracleJDK` or any valid JDK is required. 
 
 Apache Maven is also required for building from source. 
 You can clone the repo and execute `mvn clean package` in the root directory. Then `talos.sh` is created in `target` directory. 
