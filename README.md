@@ -36,15 +36,16 @@ An instance of `talos.sh` is also copied in `$HOME/.local/bin/` directory. The `
 ## Talos Commands
 `Talos` command creates its config file in `$HOME/.talos-config.xml`.
 
-- `talos.sh scan <DIR>` - scan the `<DIR>` recursively and add the VMs(`vmx` files) in the config.
-- `talos.sh ls [-U]` - list all added VMs in the config
-  - `-U` delete non-existed VMs from config.
-- `talos.sh start VM [VM...]` - start VM(s).
-- `talos.sh stop VM [VM...]` - stop VM(s).
-- `talos.sh clone VM NEW_VM` - full clone.
-- `talos.sh ps` - list running VMs and show their IP address (needs `open-vm-tools` or `vmware-tools` installed in VMs).
-- `talos.sh ssh VM [-u USER] [-p PASSWORD] [-P]` - create a ssh session to your VM
+- `talos.sh scan <DIR>` - scans the `<DIR>` recursively and adds the VMs(`vmx` files) in the config.
+- `talos.sh ls [-U]` - lists all added VMs in the config
+  - `-U` deletes non-existed VMs from config.
+- `talos.sh start VM [VM...]` - starts VM(s).
+- `talos.sh stop VM [VM...]` - stops VM(s).
+- `talos.sh clone VM NEW_VM` - creates a full clone.
+- `talos.sh ps` - lists running VMs and shows their IP address (needs `open-vm-tools` or `vmware-tools` installed in VMs).
+- `talos.sh ssh VM [-u USER] [-p PASSWORD] [-P]` - creates a ssh session to your VM
   - `-P` persists username and password in config in plain text.
-- `talos.sh ssh VM1 VM2 [VM...]` - create a multi ssh shell with synchronized input to all sessions.
-- `talos.sh cp SRC DEST [-u USER] [-p PASSWORD] [-P]` - copy file, `SRC` or `DEST` is a simple file on the host or `VM:FILE` on the guest.
+- `talos.sh ssh VM1 VM2 [VM...]` - creates a multi ssh shell with synchronized input to all sessions.
+- `talos.sh cp SRC DEST [-u USER] [-p PASSWORD] [-P]` - copies a file.
+  - `SRC` or `DEST` is a simple `FILE` on the host or `VM:FILE` on the guest.
   - `-P` persists username and password in config in plain text.
