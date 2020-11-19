@@ -14,15 +14,16 @@ and it eases working with all your VMs.
 
 ## Prepare Your Template VM
 - Install a Linux VM
-- Install `open-vm-tools` or `vmware-tools` in the VM
-- Find your main NIC's name using `ip a` command. It may be something like `ens33`.
-- Due to this [link](https://docs.vmware.com/en/VMware-Tools/10.2.0/com.vmware.vsphere.vmwaretools.doc/GUID-ECCF9D01-3666-40CE-B9FD-7EE0738AB5D9.html),
-modify `/etc/vmware-tools/tools.conf` and append following section to enable your physical NIC as default one.
+- In your VM:
+  - Install `open-vm-tools` or `vmware-tools`
+  - Find your main NIC's name using `ip a` command. It may be something like `ens33`.
+  - Due to this [link](https://docs.vmware.com/en/VMware-Tools/10.2.0/com.vmware.vsphere.vmwaretools.doc/GUID-ECCF9D01-3666-40CE-B9FD-7EE0738AB5D9.html),
+  modify `/etc/vmware-tools/tools.conf` and append following section to enable your physical NIC as default one.
     ```
     [guestinfo]
     primary-nics=ens*
     ```
-- [optional] Install Docker
+  - [optional] Install Docker
 
 Now your template VM is ready.
 
@@ -34,7 +35,9 @@ You can clone the repo and execute `mvn clean package` in the root directory. Th
 An instance of `talos.sh` is also copied in `$HOME/.local/bin/` directory. The `$HOME/.local/bin/` can be appended to the `PATH`.
 
 ## Talos Commands
-`Talos` command creates its config file in `$HOME/.talos-config.xml`.
+`Talos` command creates its config file as `$HOME/.talos-config.xml`.
+
+Note: for most of commands `-V` enables verbose. 
 
 - `talos.sh scan <DIR>` - scans the `<DIR>` recursively and adds the VMs(`vmx` files) in the config.
 - `talos.sh ls [-U]` - lists all added VMs in the config
@@ -46,6 +49,6 @@ An instance of `talos.sh` is also copied in `$HOME/.local/bin/` directory. The `
 - `talos.sh ssh VM [-u USER] [-p PASSWORD] [-P]` - creates a ssh session to your VM
   - `-P` persists username and password in config in plain text.
 - `talos.sh ssh VM1 VM2 [VM...]` - creates a multi ssh shell with synchronized input to all sessions.
-- `talos.sh cp SRC DEST [-u USER] [-p PASSWORD] [-P]` - copies a file.
+- `talos.sh cp SRC DEST [-u USER] [-p PASSWORD] [-P]` - copies a file from `SRC` to `DEST`
   - `SRC` or `DEST` is a simple `FILE` on the host or `VM:FILE` on the guest.
   - `-P` persists username and password in config in plain text.
