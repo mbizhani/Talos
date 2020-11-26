@@ -14,8 +14,8 @@ public class App {
 		final File file = new File(homeDir + File.separator + ".talos-config.xml");
 		final Context context = new Context(file);
 
-		new CommandLine(new TalosCommand())
-			.addSubcommand(new CClone(context))
+		final CommandLine line = new CommandLine(new TalosCommand());
+		line.addSubcommand(new CClone(context))
 			.addSubcommand(new CCopy(context))
 			.addSubcommand(new CList(context))
 			.addSubcommand(new CPs(context))
@@ -23,6 +23,7 @@ public class App {
 			.addSubcommand(new CSsh(context))
 			.addSubcommand(new CStart(context))
 			.addSubcommand(new CStop(context))
+			.addSubcommand(new CCompletion(line))
 			.execute(args);
 	}
 

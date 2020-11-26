@@ -15,7 +15,8 @@ import java.util.List;
 @Command(name = "clone")
 public class CClone extends CAbstract {
 
-	@Parameters(index = "0", paramLabel = "VM_NAME", description = "Name of VM (use 'ls' command)")
+	@Parameters(index = "0", paramLabel = "VM_NAME", description = "Name of VM (use 'ls' command)",
+		completionCandidates = VMListCompletion.class)
 	private String name;
 
 	@Parameters(arity = "1", index = "1..*", paramLabel = "NEW_VM_NAME(s)", description = "Name(s) for New VM")

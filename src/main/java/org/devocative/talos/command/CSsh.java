@@ -20,7 +20,8 @@ import java.util.List;
 @Command(name = "ssh")
 public class CSsh extends CAbstract {
 
-	@Parameters(arity = "1", paramLabel = "VM_NAME(s)", description = "Name of VM (use 'ls' command)")
+	@Parameters(arity = "1", paramLabel = "VM_NAME(s)", description = "Name of VM (use 'ls' command)",
+		completionCandidates = VMListCompletion.class)
 	private List<String> names;
 
 	@Option(names = {"-u", "--username"})

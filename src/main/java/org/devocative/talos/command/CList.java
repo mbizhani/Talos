@@ -9,11 +9,15 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Command(name = "ls")
 public class CList extends CAbstract {
 	@Option(names = {"-U", "--update"})
 	private boolean update = false;
+
+	@Option(names = {"-n", "--name"})
+	private boolean onlyName = false;
 
 	// ------------------------------
 
@@ -25,25 +29,29 @@ public class CList extends CAbstract {
 
 	@Override
 	public void run() {
-		final List<String> removedList = new ArrayList<>();
-		final Collection<XVmInfo> vms = context.getVmList();
-		System.out.printf("%-10s %s\n", "NAME", "VMX ADDRESS");
-		for (XVmInfo vm : vms) {
-			if (!update || new File(vm.getVmxAddr()).exists()) {
-				System.out.printf("%-10s %s\n", vm.getName(), vm.getVmxAddr());
-			} else {
-				removedList.add(vm.getName());
-			}
-		}
-
-		if (!removedList.isEmpty()) {
-			for (String name : removedList) {
-				context.removeConfig(name);
+		if (onlyName) {
+			System.out.println(context.getVmList().stream().map(XVmInfo::getName).collect(Collectors.joining(" ")));
+		} else {
+			final List<String> removedList = new ArrayList<>();
+			final Collection<XVmInfo> vms = context.getVmList();
+			System.out.printf("%-10s %s\n", "NAME", "VMX ADDRESS");
+			for (XVmInfo vm : vms) {
+				if (!update || new File(vm.getVmxAddr()).exists()) {
+					System.out.printf("%-10s %s\n", vm.getName(), vm.getVmxAddr());
+				} else {
+					removedList.add(vm.getName());
+				}
 			}
 
-			context.flush();
+			if (!removedList.isEmpty()) {
+				for (String name : removedList) {
+					context.removeConfig(name);
+				}
 
-			System.err.printf("Removed VMs Config: %s\n", removedList);
+				context.flush();
+
+				System.err.printf("Removed VMs Config: %s\n", removedList);
+			}
 		}
 	}
 }

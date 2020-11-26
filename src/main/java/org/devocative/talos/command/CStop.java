@@ -14,7 +14,8 @@ import java.util.List;
 @Command(name = "stop")
 public class CStop extends CAbstract {
 
-	@Parameters(arity = "1", paramLabel = "VM_NAME(s)", description = "Name(s) of VM (use 'ls' command)")
+	@Parameters(arity = "1", paramLabel = "VM_NAME(s)", description = "Name(s) of VM (use 'ls' command)",
+		completionCandidates = VMListCompletion.class)
 	private List<String> names;
 
 	// ------------------------------
