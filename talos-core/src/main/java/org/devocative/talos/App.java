@@ -23,6 +23,7 @@ public class App {
 			.addSubcommand(new CSsh(context))
 			.addSubcommand(new CStart(context))
 			.addSubcommand(new CStop(context))
+			.addSubcommand(new CRemove(context))
 			.addSubcommand(new CCompletion(line))
 			.execute(args);
 	}

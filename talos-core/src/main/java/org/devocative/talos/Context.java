@@ -61,23 +61,13 @@ public class Context {
 	}
 
 	public File getVmx(String vmName) {
-		vmName = vmName.trim().toLowerCase();
-
-		if (!vmMap.containsKey(vmName.trim().toLowerCase())) {
-			System.err.printf("Invalid VM Name [%s] (run 'ls' for list of valid VMs)\n", vmName);
-			System.exit(1);
-		}
+		vmName = assertVMNameAndReturn(vmName);
 
 		return new File(vmMap.get(vmName).getVmxAddr());
 	}
 
 	public XVmInfo getVmInfo(String vmName) {
-		vmName = vmName.trim().toLowerCase();
-
-		if (!vmMap.containsKey(vmName)) {
-			System.err.printf("Invalid VM Name [%s] (run 'ls' for list of valid VMs)\n", vmName);
-			System.exit(1);
-		}
+		vmName = assertVMNameAndReturn(vmName);
 
 		return vmMap.get(vmName);
 	}
@@ -104,11 +94,12 @@ public class Context {
 		return root.getCloneBaseDir();
 	}
 
-	public void removeConfig(String vmName) {
-		if (vmMap.containsKey(vmName)) {
-			final XVmInfo removed = vmMap.remove(vmName);
-			root.getVms().remove(removed);
-		}
+	public XVmInfo removeConfig(String vmName) {
+		vmName = assertVMNameAndReturn(vmName);
+
+		final XVmInfo removed = vmMap.remove(vmName);
+		root.getVms().remove(removed);
+		return removed;
 	}
 
 	// ------------------------------
@@ -120,4 +111,16 @@ public class Context {
 			}
 		}
 	}
+
+	private String assertVMNameAndReturn(String vmName) {
+		vmName = vmName.trim().toLowerCase();
+
+		if (!vmMap.containsKey(vmName)) {
+			System.err.printf("Invalid VM Name [%s] (run 'ls' for list of valid VMs)\n", vmName);
+			System.exit(1);
+		}
+
+		return vmName;
+	}
+
 }

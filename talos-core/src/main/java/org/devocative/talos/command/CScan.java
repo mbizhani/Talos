@@ -39,7 +39,7 @@ public class CScan extends CAbstract {
 				error("'%s' must be a directory", file.getAbsolutePath());
 			}
 
-			System.out.printf("Start scanning from directory '%s' ...\n", file.getAbsolutePath());
+			printVerbose("Start scanning from directory '%s' ...\n", file.getAbsolutePath());
 			processDir(file);
 
 			if (foundVmxFile == 0) {
@@ -74,7 +74,7 @@ public class CScan extends CAbstract {
 					foundNewVmxFile++;
 					System.out.printf("Found New: '%s'\n", subItem.getAbsolutePath());
 				} else {
-					System.out.printf("Found Already Added: '%s'\n", subItem.getAbsolutePath());
+					printVerbose("Found Already Added: '%s'\n", subItem.getAbsolutePath());
 				}
 			}
 		}
