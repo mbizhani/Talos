@@ -14,6 +14,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.devocative.talos.common.Util.nvl;
+
 @Command(name = "ssh", description = "Creates SSH console(s) to VM(s)")
 public class CSsh extends CAbstract {
 
@@ -42,27 +44,28 @@ public class CSsh extends CAbstract {
 	public void run() {
 		final List<SshInfo> sshInfoList = new ArrayList<>();
 		for (String name : names) {
-			final XVm vmInfo = context.getVmInfo(name);
+			final XVm vm = context.getVm(name);
 
-			printVerbose("Getting IP for VM: name=[%s] vmx=[%s]", vmInfo.getName(), vmInfo.getVmxAddr());
+			printVerbose("Getting IP for VM: name=[%s] vmx=[%s]", vm.getName(), vm.getVmxAddr());
 
-			final String hostname = VMRun
-				.getIpOf(new File(vmInfo.getVmxAddr()))
+			final String address = nvl(vm.getAddress(), () -> VMRun
+				.getIpOf(new File(vm.getVmxAddr()))
 				.assertSuccess()
-				.trim();
-			final XUser ssh = vmInfo.getSshSafely();
-			final String user = username != null ? username : ssh.getUser();
-			final String pass = username != null ? password : ssh.getPass();
+				.trim());
+
+			final XUser ssh = vm.getSshSafely();
+			final String user = nvl(username, ssh.getUser());
+			final String pass = nvl(password, ssh.getPass());
 
 			if (persist && user != null) {
 				printVerbose("Persist username and password of SSH for VM name=[%s]", name);
-				vmInfo.setSsh(new XUser(user, pass));
+				vm.setSsh(new XUser(user, pass));
 				context.flush();
 			}
 
-			printVerbose("Start SSH Connection: Name=[%s] Guest=[%s] User=[%s] Pass=[%s]", name, hostname, user, pass);
+			printVerbose("Start SSH Connection: Name=[%s] Address=[%s] User=[%s] Pass=[%s]", name, address, user, pass);
 
-			sshInfoList.add(new SshInfo(hostname, user, pass, name));
+			sshInfoList.add(new SshInfo(address, user, pass, name));
 		}
 
 		if (sshInfoList.size() == 1) {

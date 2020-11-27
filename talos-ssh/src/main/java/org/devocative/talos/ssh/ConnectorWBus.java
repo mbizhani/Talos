@@ -18,7 +18,7 @@ class ConnectorWBus {
 
 	public ConnectorWBus(List<SshInfo> infos) {
 		for (SshInfo info : infos) {
-			SimpleJSchConnector connector = new SimpleJSchConnector(info.getHostname(), 22, info.getUser(), info.getPass(), info.getName());
+			SimpleJSchConnector connector = new SimpleJSchConnector(info.getAddress(), 22, info.getUser(), info.getPass(), info.getName());
 			connectors.put(info.getName(), connector);
 		}
 	}

@@ -12,7 +12,7 @@ public class SshUtil {
 		new AbstractTerminalFrame() {
 			@Override
 			public TtyConnector createTtyConnector() {
-				return new JSchShellTtyConnector(info.getHostname(), 22, info.getUser(), info.getPass(), info.getName());
+				return new JSchShellTtyConnector(info.getAddress(), 22, info.getUser(), info.getPass(), info.getName());
 			}
 		};
 	}

@@ -45,7 +45,7 @@ public class CClone extends CAbstract {
 
 			printVerbose("Cloning new VM: vmx=[%s]", newVMX);
 
-			final XVm srcVmInfo = context.getVmInfo(name);
+			final XVm srcVmInfo = context.getVm(name);
 
 			final Result rs = VMRun
 				.of(VMCommand.clone)
@@ -56,7 +56,7 @@ public class CClone extends CAbstract {
 			if (rs.isSuccessful()) {
 				printVerbose("Clone done successfully!");
 
-				context.addVmInfo(new XVm()
+				context.addLocalVm(new XVm()
 					.setName(newName)
 					.setVmxAddr(newVMX)
 					.setSsh(new XUser(srcVmInfo.getSsh()))

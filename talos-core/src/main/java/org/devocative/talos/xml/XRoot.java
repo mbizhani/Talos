@@ -17,6 +17,8 @@ public class XRoot {
 
 	private List<XVm> local;
 
+	private List<XServer> servers;
+
 	// ------------------------------
 
 	public void addLocalVm(XVm vm) {
@@ -24,5 +26,12 @@ public class XRoot {
 			local = new ArrayList<>();
 		}
 		local.add(vm);
+	}
+
+	public void addServer(XServer server) {
+		if (servers == null) {
+			servers = new ArrayList<>();
+		}
+		servers.add(server);
 	}
 }

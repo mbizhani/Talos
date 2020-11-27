@@ -47,7 +47,7 @@ public class CScan extends CAbstract {
 					foundVmxFile++;
 
 					final File vmxFile = path.toFile();
-					final boolean isNew = context.addVmInfo(
+					final boolean isNew = context.addLocalVm(
 						new XVm()
 							.setName(vmxFile.getName().substring(0, vmxFile.getName().length() - 4))
 							.setVmxAddr(vmxFile.getAbsolutePath())

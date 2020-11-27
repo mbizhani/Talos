@@ -2,15 +2,13 @@ package org.devocative.talos;
 
 import com.thoughtworks.xstream.XStream;
 import org.devocative.talos.xml.XRoot;
+import org.devocative.talos.xml.XServer;
 import org.devocative.talos.xml.XVm;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
+import java.util.*;
 
 public class Context {
 	private final XStream xStream;
@@ -18,6 +16,7 @@ public class Context {
 	private final XRoot root;
 
 	private final Map<String, XVm> vmMap = new TreeMap<>();
+	private final Map<String, XServer> serverMap = new HashMap<>();
 
 	// ------------------------------
 
@@ -46,11 +45,21 @@ public class Context {
 
 	// ------------------------------
 
-	public boolean addVmInfo(XVm vmInfo) {
-		vmInfo.setName(vmInfo.getName().trim().toLowerCase());
+	public boolean addLocalVm(XVm vm) {
+		vm.setName(vm.getName().trim().toLowerCase());
 
-		if (!vmMap.containsKey(vmInfo.getName())) {
-			root.addLocalVm(vmInfo);
+		if (!vmMap.containsKey(vm.getName())) {
+			root.addLocalVm(vm);
+			return true;
+		}
+		return false;
+	}
+
+	public boolean addServer(XServer server) {
+		server.setName(server.getName().trim().toLowerCase());
+
+		if (!serverMap.containsKey(server.getName())) {
+			root.addServer(server);
 			return true;
 		}
 		return false;
@@ -66,10 +75,14 @@ public class Context {
 		return new File(vmMap.get(vmName).getVmxAddr());
 	}
 
-	public XVm getVmInfo(String vmName) {
+	public XVm getVm(String vmName) {
 		vmName = assertVMNameAndReturn(vmName);
 
 		return vmMap.get(vmName);
+	}
+
+	public Optional<XServer> getServer(String name) {
+		return Optional.ofNullable(serverMap.get(name));
 	}
 
 	public void flush() {
@@ -85,7 +98,7 @@ public class Context {
 	public Optional<String> findNameByVMX(String vmx) {
 		return vmMap.values()
 			.stream()
-			.filter(vmInfo -> vmInfo.getVmxAddr().equals(vmx))
+			.filter(vmInfo -> vmx.equals(vmInfo.getVmxAddr()))
 			.map(XVm::getName)
 			.findFirst();
 	}
@@ -108,6 +121,21 @@ public class Context {
 		if (root.getLocal() != null) {
 			for (XVm vmInfo : root.getLocal()) {
 				vmMap.put(vmInfo.getName(), vmInfo);
+			}
+		}
+
+		if (root.getServers() != null) {
+			for (XServer server : root.getServers()) {
+				if (server.getVms() != null) {
+
+					serverMap.put(server.getName(), server);
+
+					for (XVm vm : server.getVms()) {
+						vm.setServerName(server.getName());
+						final String key = String.format("%s.%s", server.getName(), vm.getName());
+						vmMap.put(key, vm);
+					}
+				}
 			}
 		}
 	}

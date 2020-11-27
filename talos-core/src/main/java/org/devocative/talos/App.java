@@ -25,6 +25,7 @@ public class App {
 			.addSubcommand(new CStop(context))
 			.addSubcommand(new CRemove(context))
 			.addSubcommand(new CCompletion(line))
+			.addSubcommand(new CServer(context))
 			.execute(args);
 	}
 

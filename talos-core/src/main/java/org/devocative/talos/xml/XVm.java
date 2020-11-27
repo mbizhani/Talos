@@ -2,6 +2,7 @@ package org.devocative.talos.xml;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -26,6 +27,11 @@ public class XVm {
 
 	private XUser guest = new XUser();
 
+	// ---------------
+
+	@XStreamOmitField
+	private String serverName;
+
 	// ------------------------------
 
 	public XUser getSshSafely() {
@@ -36,7 +42,16 @@ public class XVm {
 		return guest == null ? new XUser() : guest;
 	}
 
+	public String getFullName() {
+		return serverName == null ? getName() : String.format("%s.%s", serverName, name);
+	}
+
 	// ---------------
+
+	@Override
+	public String toString() {
+		return getName();
+	}
 
 	@Override
 	public boolean equals(Object o) {

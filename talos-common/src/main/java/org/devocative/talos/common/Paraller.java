@@ -12,7 +12,15 @@ import java.util.function.BiConsumer;
 @RequiredArgsConstructor
 public class Paraller<T> {
 	private final List<WCallable> tasks = new ArrayList<>();
+
 	private final int timeoutInSeconds;
+	private final Runnable atEnd;
+
+	// ------------------------------
+
+	public Paraller(int timeoutInSeconds) {
+		this(timeoutInSeconds, null);
+	}
 
 	// ------------------------------
 
@@ -54,6 +62,10 @@ public class Paraller<T> {
 					e.printStackTrace();
 				}
 			}
+		}
+
+		if (atEnd != null) {
+			atEnd.run();
 		}
 	}
 

@@ -68,7 +68,7 @@ public class MultiSshPanel {
 
 		final SettingsProvider settingsProvider = new DefaultSettingsProvider();
 		for (SshInfo info : infos) {
-			box.add(new JLabel(String.format("%s - %s", info.getName(), info.getHostname())));
+			box.add(new JLabel(String.format("%s - %s", info.getName(), info.getAddress())));
 
 			final JediTermWidget widget = new JediTermWidget(80, 20, settingsProvider);
 			widget.setTtyConnector(bus.getConnector(info.getName()));

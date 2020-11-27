@@ -1,7 +1,7 @@
 package org.devocative.talos.vmware;
 
-import org.devocative.talos.common.ExecUtil;
 import org.devocative.talos.common.Result;
+import org.devocative.talos.common.Util;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ public class VMRun implements Callable<Result> {
 			cmdLine.addAll(Arrays.asList(options));
 		}
 
-		return ExecUtil.exec(cmdLine);
+		return Util.exec(cmdLine);
 	}
 
 	public VMRun vmxFile(File vmxFile) {
