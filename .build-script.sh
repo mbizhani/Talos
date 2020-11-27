@@ -1,6 +1,6 @@
 #!/bin/bash
 
-OUT_FILE="target/$1.sh"
+OUT_FILE="target/talos.sh"
 JAR_FILE="target/$1-$2.jar"
 
 if [ -f "${JAR_FILE}" ]; then
