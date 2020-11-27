@@ -15,14 +15,14 @@ import java.util.List;
 public class XRoot {
 	private String cloneBaseDir;
 
-	private List<XVmInfo> vms;
+	private List<XVmInfo> local;
 
 	// ------------------------------
 
 	public void addVm(XVmInfo vm) {
-		if (vms == null) {
-			vms = new ArrayList<>();
+		if (local == null) {
+			local = new ArrayList<>();
 		}
-		vms.add(vm);
+		local.add(vm);
 	}
 }

@@ -6,12 +6,11 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
+import java.nio.file.Files;
 
 @Command(name = "scan", description = "Scans a directory to find .vmx files")
 public class CScan extends CAbstract {
-	private final FileFilter filter = file -> file.isDirectory() || (file.isFile() && file.getName().endsWith(".vmx"));
 
 	@Parameters(index = "0", paramLabel = "DIR", description = "Base directory to start scanning recursively")
 	private File dir;
@@ -39,44 +38,39 @@ public class CScan extends CAbstract {
 				error("'%s' must be a directory", file.getAbsolutePath());
 			}
 
-			printVerbose("Start scanning from directory '%s' ...\n", file.getAbsolutePath());
-			processDir(file);
+			printVerbose("Start scanning from directory '%s'", file.getAbsolutePath());
+
+			Files
+				.walk(file.toPath())
+				.filter(path -> path.toString().toLowerCase().endsWith(".vmx"))
+				.forEach(path -> {
+					foundVmxFile++;
+
+					final File vmxFile = path.toFile();
+					final boolean isNew = context.addVmInfo(
+						new XVmInfo()
+							.setName(vmxFile.getName().substring(0, vmxFile.getName().length() - 4))
+							.setVmxAddr(vmxFile.getAbsolutePath())
+					);
+
+					if (isNew) {
+						foundNewVmxFile++;
+						printVerbose("Found NEW: '%s'", vmxFile.getAbsolutePath());
+					} else {
+						printVerbose("Found old: '%s'", vmxFile.getAbsolutePath());
+					}
+				});
 
 			if (foundVmxFile == 0) {
-				System.out.println("No VMX File Found!");
+				printVerbose("No VMX File Found!");
 			} else {
-				System.out.printf("[%s] VMX Found, [%s] Newly Added\n", foundVmxFile, foundNewVmxFile);
+				printVerbose("Total [%s] found vmx, [%s] added now", foundVmxFile, foundNewVmxFile);
 				if (foundNewVmxFile > 0) {
 					context.flush();
 				}
 			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
-		}
-	}
-
-	private void processDir(File folder) {
-		printVerbose("Scanning directory '%s' ...", folder.getAbsolutePath());
-
-		final File[] subItems = folder.listFiles(filter);
-		for (File subItem : subItems) {
-			if (subItem.isDirectory()) {
-				processDir(subItem);
-			} else {
-				foundVmxFile++;
-				final boolean isNew = context.addVmInfo(
-					new XVmInfo()
-						.setName(subItem.getName().substring(0, subItem.getName().length() - 4))
-						.setVmxAddr(subItem.getAbsolutePath())
-				);
-
-				if (isNew) {
-					foundNewVmxFile++;
-					System.out.printf("Found New: '%s'\n", subItem.getAbsolutePath());
-				} else {
-					printVerbose("Found Already Added: '%s'\n", subItem.getAbsolutePath());
-				}
-			}
 		}
 	}
 }

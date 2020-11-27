@@ -98,15 +98,15 @@ public class Context {
 		vmName = assertVMNameAndReturn(vmName);
 
 		final XVmInfo removed = vmMap.remove(vmName);
-		root.getVms().remove(removed);
+		root.getLocal().remove(removed);
 		return removed;
 	}
 
 	// ------------------------------
 
 	private void update() {
-		if (root.getVms() != null) {
-			for (XVmInfo vmInfo : root.getVms()) {
+		if (root.getLocal() != null) {
+			for (XVmInfo vmInfo : root.getLocal()) {
 				vmMap.put(vmInfo.getName(), vmInfo);
 			}
 		}
