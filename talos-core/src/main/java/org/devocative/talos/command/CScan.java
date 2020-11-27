@@ -1,7 +1,7 @@
 package org.devocative.talos.command;
 
 import org.devocative.talos.Context;
-import org.devocative.talos.xml.XVmInfo;
+import org.devocative.talos.xml.XVm;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 
@@ -48,7 +48,7 @@ public class CScan extends CAbstract {
 
 					final File vmxFile = path.toFile();
 					final boolean isNew = context.addVmInfo(
-						new XVmInfo()
+						new XVm()
 							.setName(vmxFile.getName().substring(0, vmxFile.getName().length() - 4))
 							.setVmxAddr(vmxFile.getAbsolutePath())
 					);

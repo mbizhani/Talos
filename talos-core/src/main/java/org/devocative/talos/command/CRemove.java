@@ -2,7 +2,7 @@ package org.devocative.talos.command;
 
 import org.apache.commons.io.FileUtils;
 import org.devocative.talos.Context;
-import org.devocative.talos.xml.XVmInfo;
+import org.devocative.talos.xml.XVm;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
@@ -57,7 +57,7 @@ public class CRemove extends CAbstract {
 
 	private void remove() {
 		for (String name : names) {
-			final XVmInfo vmInfo = context.removeConfig(name);
+			final XVm vmInfo = context.removeConfig(name);
 			printVerbose("[%s]: removed from config.", name);
 
 			if (entirely) {

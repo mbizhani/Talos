@@ -2,7 +2,7 @@ package org.devocative.talos;
 
 import com.thoughtworks.xstream.XStream;
 import org.devocative.talos.xml.XRoot;
-import org.devocative.talos.xml.XVmInfo;
+import org.devocative.talos.xml.XVm;
 
 import java.io.File;
 import java.io.FileReader;
@@ -17,7 +17,7 @@ public class Context {
 	private final File file;
 	private final XRoot root;
 
-	private final Map<String, XVmInfo> vmMap = new TreeMap<>();
+	private final Map<String, XVm> vmMap = new TreeMap<>();
 
 	// ------------------------------
 
@@ -46,17 +46,17 @@ public class Context {
 
 	// ------------------------------
 
-	public boolean addVmInfo(XVmInfo vmInfo) {
+	public boolean addVmInfo(XVm vmInfo) {
 		vmInfo.setName(vmInfo.getName().trim().toLowerCase());
 
 		if (!vmMap.containsKey(vmInfo.getName())) {
-			root.addVm(vmInfo);
+			root.addLocalVm(vmInfo);
 			return true;
 		}
 		return false;
 	}
 
-	public Collection<XVmInfo> getVmList() {
+	public Collection<XVm> getVmList() {
 		return vmMap.values();
 	}
 
@@ -66,7 +66,7 @@ public class Context {
 		return new File(vmMap.get(vmName).getVmxAddr());
 	}
 
-	public XVmInfo getVmInfo(String vmName) {
+	public XVm getVmInfo(String vmName) {
 		vmName = assertVMNameAndReturn(vmName);
 
 		return vmMap.get(vmName);
@@ -86,7 +86,7 @@ public class Context {
 		return vmMap.values()
 			.stream()
 			.filter(vmInfo -> vmInfo.getVmxAddr().equals(vmx))
-			.map(XVmInfo::getName)
+			.map(XVm::getName)
 			.findFirst();
 	}
 
@@ -94,10 +94,10 @@ public class Context {
 		return root.getCloneBaseDir();
 	}
 
-	public XVmInfo removeConfig(String vmName) {
+	public XVm removeConfig(String vmName) {
 		vmName = assertVMNameAndReturn(vmName);
 
-		final XVmInfo removed = vmMap.remove(vmName);
+		final XVm removed = vmMap.remove(vmName);
 		root.getLocal().remove(removed);
 		return removed;
 	}
@@ -106,7 +106,7 @@ public class Context {
 
 	private void update() {
 		if (root.getLocal() != null) {
-			for (XVmInfo vmInfo : root.getLocal()) {
+			for (XVm vmInfo : root.getLocal()) {
 				vmMap.put(vmInfo.getName(), vmInfo);
 			}
 		}

@@ -4,7 +4,7 @@ import org.devocative.talos.Context;
 import org.devocative.talos.common.Result;
 import org.devocative.talos.vmware.VMRun;
 import org.devocative.talos.xml.XUser;
-import org.devocative.talos.xml.XVmInfo;
+import org.devocative.talos.xml.XVm;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
@@ -133,7 +133,7 @@ public class CCopy extends CAbstract {
 	}
 
 	private XUser getUser(String name) {
-		final XVmInfo vmInfo = context.getVmInfo(name);
+		final XVm vmInfo = context.getVmInfo(name);
 		final XUser guest = vmInfo.getGuestSafely();
 		final String user = username != null ? username : guest.getUser();
 		final String pass = username != null ? password : guest.getPass();

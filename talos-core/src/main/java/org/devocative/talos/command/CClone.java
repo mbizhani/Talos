@@ -5,7 +5,7 @@ import org.devocative.talos.common.Result;
 import org.devocative.talos.vmware.VMCommand;
 import org.devocative.talos.vmware.VMRun;
 import org.devocative.talos.xml.XUser;
-import org.devocative.talos.xml.XVmInfo;
+import org.devocative.talos.xml.XVm;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 
@@ -45,7 +45,7 @@ public class CClone extends CAbstract {
 
 			printVerbose("Cloning new VM: vmx=[%s]", newVMX);
 
-			final XVmInfo srcVmInfo = context.getVmInfo(name);
+			final XVm srcVmInfo = context.getVmInfo(name);
 
 			final Result rs = VMRun
 				.of(VMCommand.clone)
@@ -56,7 +56,7 @@ public class CClone extends CAbstract {
 			if (rs.isSuccessful()) {
 				printVerbose("Clone done successfully!");
 
-				context.addVmInfo(new XVmInfo()
+				context.addVmInfo(new XVm()
 					.setName(newName)
 					.setVmxAddr(newVMX)
 					.setSsh(new XUser(srcVmInfo.getSsh()))

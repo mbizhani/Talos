@@ -15,11 +15,11 @@ import java.util.List;
 public class XRoot {
 	private String cloneBaseDir;
 
-	private List<XVmInfo> local;
+	private List<XVm> local;
 
 	// ------------------------------
 
-	public void addVm(XVmInfo vm) {
+	public void addLocalVm(XVm vm) {
 		if (local == null) {
 			local = new ArrayList<>();
 		}

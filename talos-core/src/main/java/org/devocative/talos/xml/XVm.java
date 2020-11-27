@@ -12,12 +12,15 @@ import java.util.Objects;
 @Setter
 @Accessors(chain = true)
 @XStreamAlias("vm")
-public class XVmInfo {
+public class XVm {
 	@XStreamAsAttribute
 	private String name;
 
 	@XStreamAsAttribute
 	private String vmxAddr;
+
+	@XStreamAsAttribute
+	private String address;
 
 	private XUser ssh = new XUser();
 
@@ -38,8 +41,8 @@ public class XVmInfo {
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (!(o instanceof XVmInfo)) return false;
-		XVmInfo info = (XVmInfo) o;
+		if (!(o instanceof XVm)) return false;
+		XVm info = (XVm) o;
 		return Objects.equals(getName(), info.getName());
 	}
 

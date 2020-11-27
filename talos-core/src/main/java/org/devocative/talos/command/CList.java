@@ -1,7 +1,7 @@
 package org.devocative.talos.command;
 
 import org.devocative.talos.Context;
-import org.devocative.talos.xml.XVmInfo;
+import org.devocative.talos.xml.XVm;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -34,14 +34,14 @@ public class CList extends CAbstract {
 	public void run() {
 		if (onlyName) {
 			System.out.println(context.getVmList().stream()
-				.map(XVmInfo::getName)
+				.map(XVm::getName)
 				.collect(Collectors.joining(" "))
 			);
 		} else {
 			final List<String> removedList = new ArrayList<>();
-			final Collection<XVmInfo> vms = context.getVmList();
+			final Collection<XVm> vms = context.getVmList();
 			System.out.printf("%-10s %s\n", "NAME", "VMX ADDRESS");
-			for (XVmInfo vm : vms) {
+			for (XVm vm : vms) {
 				if (!update || new File(vm.getVmxAddr()).exists()) {
 					System.out.printf("%-10s %s\n", vm.getName(), vm.getVmxAddr());
 				} else {

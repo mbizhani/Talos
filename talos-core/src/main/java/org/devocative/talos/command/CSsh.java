@@ -5,7 +5,7 @@ import org.devocative.talos.ssh.SshInfo;
 import org.devocative.talos.ssh.SshUtil;
 import org.devocative.talos.vmware.VMRun;
 import org.devocative.talos.xml.XUser;
-import org.devocative.talos.xml.XVmInfo;
+import org.devocative.talos.xml.XVm;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
@@ -42,7 +42,7 @@ public class CSsh extends CAbstract {
 	public void run() {
 		final List<SshInfo> sshInfoList = new ArrayList<>();
 		for (String name : names) {
-			final XVmInfo vmInfo = context.getVmInfo(name);
+			final XVm vmInfo = context.getVmInfo(name);
 
 			printVerbose("Getting IP for VM: name=[%s] vmx=[%s]", vmInfo.getName(), vmInfo.getVmxAddr());
 
