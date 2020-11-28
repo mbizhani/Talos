@@ -111,7 +111,14 @@ public class Context {
 		vmName = assertVMNameAndReturn(vmName);
 
 		final XVm removed = vmMap.remove(vmName);
-		root.getLocal().remove(removed);
+		if (removed.isLocal()) {
+			root.getLocal().remove(removed);
+		} else {
+			serverMap
+				.get(removed.getServerName())
+				.getVms()
+				.remove(removed);
+		}
 		return removed;
 	}
 
@@ -127,13 +134,11 @@ public class Context {
 		if (root.getServers() != null) {
 			for (XServer server : root.getServers()) {
 				if (server.getVms() != null) {
-
 					serverMap.put(server.getName(), server);
 
 					for (XVm vm : server.getVms()) {
 						vm.setServerName(server.getName());
-						final String key = String.format("%s.%s", server.getName(), vm.getName());
-						vmMap.put(key, vm);
+						vmMap.put(vm.getFullName(), vm);
 					}
 				}
 			}

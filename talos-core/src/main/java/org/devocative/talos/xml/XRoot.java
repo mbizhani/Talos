@@ -16,7 +16,6 @@ public class XRoot {
 	private String cloneBaseDir;
 
 	private List<XVm> local;
-
 	private List<XServer> servers;
 
 	// ------------------------------

@@ -57,11 +57,14 @@ public class CRemove extends CAbstract {
 
 	private void remove() {
 		for (String name : names) {
-			final XVm vmInfo = context.removeConfig(name);
-			printVerbose("[%s]: removed from config.", name);
+			final XVm vm = context.removeConfig(name);
+			printVerbose("[%s]: removed from config", name);
 
 			if (entirely) {
-				final File vmxFile = new File(vmInfo.getVmxAddr());
+				if (!vm.isLocal()) {
+					error("Can't remove VM on server: %s", name);
+				}
+				final File vmxFile = new File(vm.getVmxAddr());
 
 				if (vmxFile.exists()) {
 					final File vmDir = vmxFile.getParentFile();

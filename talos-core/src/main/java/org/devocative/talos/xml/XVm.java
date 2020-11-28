@@ -46,6 +46,10 @@ public class XVm {
 		return serverName == null ? getName() : String.format("%s.%s", serverName, name);
 	}
 
+	public boolean isLocal() {
+		return serverName == null;
+	}
+
 	// ---------------
 
 	@Override
