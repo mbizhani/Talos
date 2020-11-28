@@ -2,6 +2,10 @@ package org.devocative.talos;
 
 
 import org.devocative.talos.command.*;
+import org.devocative.talos.command.server.CSFetch;
+import org.devocative.talos.command.server.CSList;
+import org.devocative.talos.command.server.CSSCan;
+import org.devocative.talos.command.server.CServer;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -25,8 +29,11 @@ public class App {
 			.addSubcommand(new CStop(context))
 			.addSubcommand(new CRemove(context))
 			.addSubcommand(new CCompletion(line))
-			.addSubcommand(new CServer(context))
-			.execute(args);
+			.addSubcommand(new CommandLine(new CServer())
+				.addSubcommand(new CSList(context))
+				.addSubcommand(new CSFetch(context))
+				.addSubcommand(new CSSCan(context))
+			).execute(args);
 	}
 
 	@Command(name = "\b")

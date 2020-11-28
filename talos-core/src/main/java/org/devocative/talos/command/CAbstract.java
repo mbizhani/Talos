@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-abstract class CAbstract implements Runnable {
+public abstract class CAbstract implements Runnable {
 	protected final Context context;
 
 	@Option(names = {"-V", "--verbose"}, description = "Verbose")
@@ -21,7 +21,7 @@ abstract class CAbstract implements Runnable {
 
 	// ------------------------------
 
-	void printVerbose(String str, Object... args) {
+	protected void printVerbose(String str, Object... args) {
 		if (verbose) {
 			if (args == null) {
 				System.out.println(str);
@@ -31,11 +31,11 @@ abstract class CAbstract implements Runnable {
 		}
 	}
 
-	void error(String str, Object... args) {
+	protected void error(String str, Object... args) {
 		error(1, str, args);
 	}
 
-	void error(Integer exitCode, String str, Object... args) {
+	protected void error(Integer exitCode, String str, Object... args) {
 		if (args == null) {
 			System.err.println(str);
 		} else {

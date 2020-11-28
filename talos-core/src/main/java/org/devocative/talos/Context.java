@@ -32,9 +32,8 @@ public class Context {
 				root = (XRoot) xStream.fromXML(new FileReader(configFile));
 			} else {
 				root = new XRoot();
-				root.setCloneBaseDir(System.getProperty("user.home") + File.separator + "VMWare");
+				root.setCloneBaseDir(System.getProperty("user.home") + File.separator + "VMware");
 				xStream.toXML(root, new FileWriter(configFile));
-				System.out.printf("A new config file created: '%s'", configFile.getAbsolutePath());
 			}
 
 			update();
@@ -69,6 +68,10 @@ public class Context {
 		return vmMap.values();
 	}
 
+	public Collection<XServer> getServerList() {
+		return serverMap.values();
+	}
+
 	public File getVmx(String vmName) {
 		vmName = assertVMNameAndReturn(vmName);
 
@@ -81,8 +84,31 @@ public class Context {
 		return vmMap.get(vmName);
 	}
 
-	public Optional<XServer> getServer(String name) {
-		return Optional.ofNullable(serverMap.get(name));
+	public Optional<XServer> getServer(String name, String address) {
+		if (serverMap.containsKey(name)) {
+			final XServer server = serverMap.get(name);
+
+			if (!server.getAddress().equals(address)) {
+				System.err.printf("Name(%s) already exists with an address(%s)\n", name, server.getAddress());
+				System.exit(1);
+			}
+
+			return Optional.of(server);
+		} else {
+			final Optional<XServer> first = serverMap.values()
+				.stream()
+				.filter(server -> server.getAddress().equals(address))
+				.findFirst();
+
+			if (first.isPresent()) {
+				final XServer server = first.get();
+				System.err.printf("Address(%s) already exists with a name(%s)\n",
+					server.getAddress(), server.getName());
+				System.exit(1);
+			}
+
+			return Optional.empty();
+		}
 	}
 
 	public void flush() {
@@ -133,9 +159,9 @@ public class Context {
 
 		if (root.getServers() != null) {
 			for (XServer server : root.getServers()) {
-				if (server.getVms() != null) {
-					serverMap.put(server.getName(), server);
+				serverMap.put(server.getName(), server);
 
+				if (server.getVms() != null) {
 					for (XVm vm : server.getVms()) {
 						vm.setServerName(server.getName());
 						vmMap.put(vm.getFullName(), vm);

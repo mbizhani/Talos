@@ -5,8 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -15,21 +15,21 @@ import java.util.List;
 public class XRoot {
 	private String cloneBaseDir;
 
-	private List<XVm> local;
-	private List<XServer> servers;
+	private Set<XVm> local;
+	private Set<XServer> servers;
 
 	// ------------------------------
 
 	public void addLocalVm(XVm vm) {
 		if (local == null) {
-			local = new ArrayList<>();
+			local = new HashSet<>();
 		}
 		local.add(vm);
 	}
 
 	public void addServer(XServer server) {
 		if (servers == null) {
-			servers = new ArrayList<>();
+			servers = new HashSet<>();
 		}
 		servers.add(server);
 	}

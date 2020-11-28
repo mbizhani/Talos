@@ -9,7 +9,7 @@ import picocli.CommandLine.Command;
 @Command(name = "completion",
 	description = "Generates bash completion script (add entry 'source <(talos.sh completion)' in your '~/.bashrc')")
 public class CCompletion implements Runnable {
-	static final String TALOS_CMD = "talos.sh";
+	public static final String TALOS_CMD = "talos.sh";
 
 	private final CommandLine commandLine;
 

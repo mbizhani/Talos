@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -29,7 +29,7 @@ public class XServer {
 	@XStreamAsAttribute
 	private String password;
 
-	private List<XVm> vms;
+	private Set<XVm> vms;
 
 	// ------------------------------
 
@@ -44,15 +44,10 @@ public class XServer {
 		vm.setName(vm.getName().trim().toLowerCase());
 
 		if (vms == null) {
-			vms = new ArrayList<>();
+			vms = new HashSet<>();
 		}
 
-		if (!vms.contains(vm)) {
-			vms.add(vm);
-			return true;
-		}
-
-		return false;
+		return vms.add(vm);
 	}
 
 	// ---------------
@@ -67,11 +62,11 @@ public class XServer {
 		if (this == o) return true;
 		if (!(o instanceof XServer)) return false;
 		XServer xServer = (XServer) o;
-		return Objects.equals(getName(), xServer.getName());
+		return Objects.equals(getAddress(), xServer.getAddress());
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(getName());
+		return Objects.hash(getAddress());
 	}
 }
