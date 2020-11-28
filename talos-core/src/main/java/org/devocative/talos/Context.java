@@ -88,13 +88,13 @@ public class Context {
 		if (serverMap.containsKey(name)) {
 			final XServer server = serverMap.get(name);
 
-			if (!server.getAddress().equals(address)) {
+			if (address != null && !server.getAddress().equals(address)) {
 				System.err.printf("Name(%s) already exists with an address(%s)\n", name, server.getAddress());
 				System.exit(1);
 			}
 
 			return Optional.of(server);
-		} else {
+		} else if (address != null) {
 			final Optional<XServer> first = serverMap.values()
 				.stream()
 				.filter(server -> server.getAddress().equals(address))
@@ -106,9 +106,9 @@ public class Context {
 					server.getAddress(), server.getName());
 				System.exit(1);
 			}
-
-			return Optional.empty();
 		}
+
+		return Optional.empty();
 	}
 
 	public void flush() {
