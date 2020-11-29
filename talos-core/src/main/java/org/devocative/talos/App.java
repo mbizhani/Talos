@@ -15,7 +15,8 @@ public class App {
 
 	public static void main(String[] args) {
 		final String homeDir = System.getProperty("user.home");
-		final File file = new File(homeDir + File.separator + ".talos-config.xml");
+		final File file = new File(homeDir + File.separator + "/.talos/config.xml");
+		file.getParentFile().mkdirs();
 		final Context context = new Context(file);
 
 		final CommandLine line = new CommandLine(new TalosCommand());
