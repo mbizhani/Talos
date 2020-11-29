@@ -10,7 +10,6 @@ if [ -f "${JAR_FILE}" ]; then
 #!/bin/bash
 
 if [ "\$1" == "ssh" ]; then
-  mkdir -p "\${HOME}/.talos"
   exec java -jar \$0 "\$@" > /dev/null 2>&1 &
   exit 0
 else
