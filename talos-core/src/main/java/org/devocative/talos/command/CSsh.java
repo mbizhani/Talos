@@ -32,6 +32,9 @@ public class CSsh extends CAbstract {
 	@Option(names = {"-P", "--persist"}, description = "Stores username and password in Talos config")
 	private boolean persist = false;
 
+	@Option(names = {"-K", "--keygen"}, description = "Create SSH key and store in server")
+	private String keyGen;
+
 	// ------------------------------
 
 	public CSsh(Context context) {
@@ -68,11 +71,17 @@ public class CSsh extends CAbstract {
 			sshInfoList.add(new SshInfo(address, user, pass, name));
 		}
 
-		if (sshInfoList.size() == 1) {
-			final SshInfo info = sshInfoList.get(0);
-			SshUtil.singleSsh(info);
+		if (keyGen != null) {
+			for (SshInfo info : sshInfoList) {
+				SshUtil.generateKeyAndInstall(keyGen, info, false);
+			}
 		} else {
-			SshUtil.multiSsh(sshInfoList);
+			if (sshInfoList.size() == 1) {
+				final SshInfo info = sshInfoList.get(0);
+				SshUtil.singleSsh(info);
+			} else {
+				SshUtil.multiSsh(sshInfoList);
+			}
 		}
 	}
 }
