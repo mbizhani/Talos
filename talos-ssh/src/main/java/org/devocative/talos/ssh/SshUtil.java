@@ -50,11 +50,7 @@ public class SshUtil {
 
 	public static void generateKeyAndInstall(String keyName, SshInfo info, boolean regenerate) {
 		try {
-			final File keyFile = new File(System.getProperty("user.home") +
-				File.separatorChar +
-				".ssh" +
-				File.separatorChar +
-				keyName);
+			final File keyFile = new File(System.getProperty("user.home") + "/.ssh/" + keyName);
 
 			if (regenerate || !keyFile.exists()) {
 				final KeyPair keyPair = KeyPair.genKeyPair(J_SCH, GEN_KEY_TYPE, GEN_KEY_SIZE);

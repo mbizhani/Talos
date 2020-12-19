@@ -134,14 +134,10 @@ public class CCopy extends CAbstract {
 
 	private XUser getUser(String name) {
 		final XVm vmInfo = context.getVm(name);
-		final XUser guest = vmInfo.getGuestSafely();
-		final String user = username != null ? username : guest.getUser();
-		final String pass = username != null ? password : guest.getPass();
+		final XUser result = vmInfo.getGuestSafely(username, password, persist);
 
-		final XUser result = new XUser(user, pass);
 		if (persist) {
 			printVerbose("Persist username and password of guest for VM name=[%s]", name);
-			vmInfo.setGuest(result);
 			context.flush();
 		}
 

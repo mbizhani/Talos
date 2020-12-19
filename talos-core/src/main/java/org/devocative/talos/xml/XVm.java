@@ -6,8 +6,12 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.devocative.talos.vmware.VMRun;
 
+import java.io.File;
 import java.util.Objects;
+
+import static org.devocative.talos.common.Util.nvl;
 
 @Getter
 @Setter
@@ -34,12 +38,28 @@ public class XVm {
 
 	// ------------------------------
 
-	public XUser getSshSafely() {
-		return ssh == null ? new XUser() : ssh;
+	public XUser getSshSafely(String username, String password, boolean assign) {
+		final XUser user = ssh == null ? new XUser() : ssh;
+		user.setUser(nvl(username, user.getUser()));
+		user.setPass(nvl(password, user.getPass()));
+
+		if (assign) {
+			this.ssh = user;
+		}
+
+		return user;
 	}
 
-	public XUser getGuestSafely() {
-		return guest == null ? new XUser() : guest;
+	public XUser getGuestSafely(String username, String password, boolean assign) {
+		final XUser user = guest == null ? new XUser() : guest;
+		user.setUser(nvl(username, user.getUser()));
+		user.setPass(nvl(password, user.getPass()));
+
+		if (assign) {
+			this.guest = user;
+		}
+
+		return user;
 	}
 
 	public String getFullName() {
@@ -48,6 +68,13 @@ public class XVm {
 
 	public boolean isLocal() {
 		return serverName == null;
+	}
+
+	public String getAddressSafely() {
+		return nvl(getAddress(), () -> isLocal() ? VMRun
+			.getIpOf(new File(getVmxAddr()))
+			.assertSuccess()
+			.trim() : null);
 	}
 
 	// ---------------

@@ -3,18 +3,14 @@ package org.devocative.talos.command;
 import org.devocative.talos.Context;
 import org.devocative.talos.ssh.SshInfo;
 import org.devocative.talos.ssh.SshUtil;
-import org.devocative.talos.vmware.VMRun;
 import org.devocative.talos.xml.XUser;
 import org.devocative.talos.xml.XVm;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.devocative.talos.common.Util.nvl;
 
 @Command(name = "ssh", description = "Creates SSH console(s) to VM(s)")
 public class CSsh extends CAbstract {
@@ -51,24 +47,19 @@ public class CSsh extends CAbstract {
 
 			printVerbose("Getting IP for VM: name=[%s] vmx=[%s]", vm.getName(), vm.getVmxAddr());
 
-			final String address = nvl(vm.getAddress(), () -> VMRun
-				.getIpOf(new File(vm.getVmxAddr()))
-				.assertSuccess()
-				.trim());
+			final String address = vm.getAddressSafely();
 
-			final XUser ssh = vm.getSshSafely();
-			final String user = nvl(username, ssh.getUser());
-			final String pass = nvl(password, ssh.getPass());
+			final XUser ssh = vm.getSshSafely(username, password, persist);
 
-			if (persist && user != null) {
+			if (persist) {
 				printVerbose("Persist username and password of SSH for VM name=[%s]", name);
-				vm.setSsh(new XUser(user, pass));
 				context.flush();
 			}
 
-			printVerbose("Start SSH Connection: Name=[%s] Address=[%s] User=[%s] Pass=[%s]", name, address, user, pass);
+			printVerbose("Start SSH Connection: Name=[%s] Address=[%s] User=[%s] Pass=[%s]",
+				name, address, ssh.getUser(), ssh.getPass() != null);
 
-			sshInfoList.add(new SshInfo(address, user, pass, name));
+			sshInfoList.add(new SshInfo(address, ssh.getUser(), ssh.getPass(), name));
 		}
 
 		if (keyGen != null) {

@@ -72,6 +72,7 @@ public abstract class CAbstract implements Runnable {
 			final String opt = readLine();
 			action.accept(opt == null || opt.isEmpty() || !options.contains(opt) ? defaultOption : opt);
 		} else {
+			System.out.print(question);
 			action.accept(readLine());
 		}
 	}

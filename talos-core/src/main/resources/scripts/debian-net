@@ -1,0 +1,16 @@
+IP='{{ip*}}'
+NETMASK='{{netmask*}}'
+GATEWAY='{{gateway*}}'
+HOSTNAME='{{hostname*}}'
+
+if [[ "${IP}" && "${GATEWAY}" ]]; then
+  sudo sed -i "s|dhcp|static\n  address ${IP}\n  netmask ${NETMASK}\n  gateway ${GATEWAY}|g" /etc/network/interfaces
+fi
+
+if [ "${HOSTNAME}" ]; then
+  sudo hostnamectl --static set-hostname "${HOSTNAME}"
+
+  if [ "${IP}" ]; then
+    grep -q "$HOSTNAME" /etc/hosts || printf "\n$IP\t$HOSTNAME\n" | sudo tee -a /etc/hosts > /dev/null
+  fi
+fi
