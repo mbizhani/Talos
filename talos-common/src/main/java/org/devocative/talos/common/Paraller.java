@@ -85,7 +85,7 @@ public class Paraller<T> {
 
 	@AllArgsConstructor
 	private class WResult {
-		private String id;
-		private T result;
+		private final String id;
+		private final T result;
 	}
 }

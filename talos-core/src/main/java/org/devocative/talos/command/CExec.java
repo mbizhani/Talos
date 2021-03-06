@@ -181,7 +181,7 @@ public class CExec extends CAbstract {
 
 	private void install() {
 		try {
-			new File(SCRIPT_HOME_DIR).mkdirs();
+			Files.createDirectories(Paths.get(SCRIPT_HOME_DIR));
 
 			final URI uri = getClass().getResource("/scripts/").toURI();
 			final Path scripts;
@@ -196,7 +196,7 @@ public class CExec extends CAbstract {
 					final String fileName = path.getFileName().toString();
 					final String dest = SCRIPT_HOME_DIR + fileName;
 					printVerbose("Installing: [%s] -> [%s]", fileName, dest);
-					final InputStream asStream = getClass().getResourceAsStream("/scripts/" + path.getFileName());
+					final InputStream asStream = getClass().getResourceAsStream("/scripts/" + fileName);
 					IOUtils.copy(asStream, new FileOutputStream(dest));
 				} catch (Exception e) {
 					throw new RuntimeException(e);

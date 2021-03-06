@@ -50,15 +50,13 @@ class ConnectorWBus {
 			.collect(Collectors.toList());
 
 		final SimpleJSchConnector master = connectors.get(name);
-		master.setWriter(bytes -> {
-			slaves.forEach(connector -> {
-				try {
-					connector.write(bytes);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			});
-		});
+		master.setWriter(bytes -> slaves.forEach(connector -> {
+			try {
+				connector.write(bytes);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}));
 	}
 
 	public void removeMaster() {

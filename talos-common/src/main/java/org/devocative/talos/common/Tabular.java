@@ -70,10 +70,6 @@ public class Tabular {
 	// ------------------------------
 
 	private String generate(int size) {
-		final StringBuilder builder = new StringBuilder();
-		for (int i = 0; i < size; i++) {
-			builder.append("-");
-		}
-		return builder.toString();
+		return "-".repeat(size);
 	}
 }

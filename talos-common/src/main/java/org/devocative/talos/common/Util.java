@@ -12,7 +12,7 @@ public class Util {
 
 			final Process process = processBuilder.start();
 
-			final StringBuilder output = new StringBuilder("");
+			final StringBuilder output = new StringBuilder();
 
 			final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 

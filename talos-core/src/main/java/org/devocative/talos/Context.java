@@ -24,8 +24,9 @@ public class Context {
 		this.file = configFile;
 
 		xStream = new XStream();
+		XStream.setupDefaultSecurity(xStream);
 		xStream.processAnnotations(XRoot.class);
-		xStream.allowTypesByRegExp(new String[]{".*"});
+		xStream.allowTypesByWildcard(new String[]{"org.devocative.talos.**"});
 
 		try {
 			if (configFile.exists()) {
