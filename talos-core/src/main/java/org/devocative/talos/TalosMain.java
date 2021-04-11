@@ -11,7 +11,7 @@ import picocli.CommandLine.Command;
 
 import java.io.File;
 
-public class App {
+public class TalosMain {
 
 	public static void main(String[] args) {
 		final String homeDir = System.getProperty("user.home");
@@ -31,6 +31,11 @@ public class App {
 			.addSubcommand(new CStop(context))
 			.addSubcommand(new CRemove(context))
 			.addSubcommand(new CCompletion(line))
+			.addSubcommand(new CommandLine(new CSnapshot())
+				.addSubcommand(new CSnapshot.Create(context))
+				.addSubcommand(new CSnapshot.List(context))
+				.addSubcommand(new CSnapshot.Remove(context))
+				.addSubcommand(new CSnapshot.Revert(context)))
 			.addSubcommand(new CommandLine(new CServer())
 				.addSubcommand(new CSList(context))
 				.addSubcommand(new CSFetch(context))

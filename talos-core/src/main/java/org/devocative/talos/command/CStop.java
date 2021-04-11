@@ -6,6 +6,7 @@ import org.devocative.talos.common.Result;
 import org.devocative.talos.vmware.VMCommand;
 import org.devocative.talos.vmware.VMRun;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
 import java.io.File;
@@ -17,6 +18,9 @@ public class CStop extends CAbstract {
 	@Parameters(arity = "1", paramLabel = "VM_NAME(s)", description = "Name(s) of VM (use 'ls' command)",
 		completionCandidates = VMListCompletion.class)
 	private List<String> names;
+
+	@Option(names = {"-f", "--force"}, description = "Power-off the VM")
+	private boolean force = false;
 
 	// ------------------------------
 
@@ -38,6 +42,7 @@ public class CStop extends CAbstract {
 			paraller.addTask(name, () -> VMRun
 				.of(VMCommand.stop)
 				.vmxFile(vmx)
+				.options(force ? "hard" : "soft")
 				.call()
 			);
 

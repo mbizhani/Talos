@@ -11,5 +11,10 @@ public enum VMCommand {
 	fileExistsInGuest,
 	deleteFileInGuest,
 	copyFileFromHostToGuest,
-	copyFileFromGuestToHost
+	copyFileFromGuestToHost,
+
+	listSnapshots,
+	snapshot,
+	deleteSnapshot,
+	revertToSnapshot
 }
