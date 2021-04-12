@@ -31,11 +31,11 @@ public class CExec extends CAbstract {
 	@Parameters(index = "1..*", paramLabel = "CMD", description = "Command/Params")
 	private List<String> commandOrParams;
 
-	@Option(names = {"-S", "--script"}, description = "Name of installed script",
+	@Option(names = {"-s", "--script"}, description = "Name of installed script",
 		completionCandidates = ScriptListCompletion.class)
 	private String script;
 
-	@Option(names = {"-s", "--stdin"}, description = "Standard Input for Command")
+	@Option(names = {"-S", "--stdin"}, description = "Standard Input for Command")
 	private String stdin;
 
 	@Option(names = {"-u", "--username"}, description = "VM login username")
@@ -74,6 +74,10 @@ public class CExec extends CAbstract {
 
 		if (installScrips) {
 			install();
+			return;
+		}
+
+		if (name == null) {
 			return;
 		}
 
@@ -209,11 +213,14 @@ public class CExec extends CAbstract {
 
 	private void printList() {
 		try {
-			System.out.println(
-				Files.list(Paths.get(SCRIPT_HOME_DIR))
-					.map(path -> path.getFileName().toString())
-					.collect(Collectors.joining(" "))
-			);
+			final var scriptDir = Paths.get(SCRIPT_HOME_DIR);
+			if (Files.exists(scriptDir)) {
+				System.out.println(
+					Files.list(scriptDir)
+						.map(path -> path.getFileName().toString())
+						.collect(Collectors.joining(" "))
+				);
+			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
