@@ -69,6 +69,10 @@ public class SshUtil {
 		}
 	}
 
+	public static void exec(SshInfo info, String cmd) {
+		exec(info, cmd, null);
+	}
+
 	public static void exec(SshInfo info, String cmd, InputStream stdin) {
 		try {
 			final Session session = J_SCH.getSession(info.getUser(), info.getAddress(), 22);

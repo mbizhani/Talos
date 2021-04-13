@@ -19,39 +19,43 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
-@Command(name = "exec", description = "Execute command")
+@Command(name = "exec", description = "Execute Command/Script")
 public class CExec extends CAbstract {
 
 	@Parameters(index = "0", arity = "0", paramLabel = "VM_NAME", description = "Name of VM",
 		completionCandidates = VMListCompletion.class)
 	private String name;
 
-	@Parameters(index = "1..*", paramLabel = "CMD", description = "Command/Params")
+	@Parameters(index = "1..*", paramLabel = "CMD/SCRIPT_PARAMS", description = "Command/Params")
 	private List<String> commandOrParams;
 
-	@Option(names = {"-s", "--script"}, description = "Name of installed script",
+	@Option(names = {"-s", "--script"}, paramLabel = "script", description = "Name of Installed Script",
 		completionCandidates = ScriptListCompletion.class)
-	private String script;
+	private String execScript;
 
-	@Option(names = {"-S", "--stdin"}, description = "Standard Input for Command")
-	private String stdin;
-
-	@Option(names = {"-u", "--username"}, description = "VM login username")
+	@Option(names = {"-u", "--username"}, paramLabel = "username", description = "VM Login Username")
 	private String username;
 
-	@Option(names = {"-p", "--password"}, description = "VM login password")
+	@Option(names = {"-p", "--password"}, paramLabel = "password", description = "VM Login Password")
 	private String password;
 
-	@Option(names = {"-P", "--persist"}, description = "Stores username and password in Talos config")
+	@Option(names = {"-P", "--persist"}, description = "Store Username and Password in Talos Config")
 	private boolean persist = false;
 
-	@Option(names = {"-L", "--list-scripts"}, description = "Name of installed scripts")
+	@Option(names = {"-l"}, description = "List of Installed Script(s)")
 	private boolean listScrips = false;
 
-	@Option(names = {"-I", "--install-scripts"}, description = "Install scripts")
-	private boolean installScrips = false;
+	@Option(names = {"--install-script"}, paramLabel = "script_file", description = "Install Script")
+	private File scriptFile;
+
+	// It is handled in the script part of talos.sh
+	@Option(names = {"--edit-script"}, paramLabel = "script", description = "Edit Script",
+		completionCandidates = ScriptListCompletion.class)
+	private String editScript;
+
+	@Option(names = {"--init"}, description = "Init Scripts")
+	private boolean init = false;
 
 	// ---------------
 
@@ -67,13 +71,18 @@ public class CExec extends CAbstract {
 
 	@Override
 	public void run() {
-		if (listScrips) {
+		/*if (listScrips) {
 			printList();
+			return;
+		}*/
+
+		if (scriptFile != null) {
+			installFile();
 			return;
 		}
 
-		if (installScrips) {
-			install();
+		if (init) {
+			installOfClasspath();
 			return;
 		}
 
@@ -91,7 +100,7 @@ public class CExec extends CAbstract {
 		final SshInfo info = new SshInfo(address, ssh.getUser(), ssh.getPass(), name);
 
 		final String cmd;
-		if (script != null) {
+		if (execScript != null) {
 			cmd = loadScript();
 		} else {
 			cmd = String.join(" ", commandOrParams);
@@ -102,8 +111,8 @@ public class CExec extends CAbstract {
 		}
 
 		printVerbose("Exec[%s]: <<\n%s\n>>", name, cmd);
-		String stdIn = (stdin != null ? stdin : "") + "\n";
-		SshUtil.exec(info, cmd, new ByteArrayInputStream(stdIn.getBytes()));
+		// TIP: https://www.cyberciti.biz/faq/how-to-run-multiple-commands-in-sudo-under-linux-or-unix/
+		SshUtil.exec(info, String.format("echo '%s' | sudo -S -p '' -- bash -c '%s'", info.getPass(), cmd));
 	}
 
 	// ------------------------------
@@ -112,17 +121,17 @@ public class CExec extends CAbstract {
 		try {
 			String content = null;
 
-			final File scriptFile = new File(SCRIPT_HOME_DIR + script);
+			final File scriptFile = new File(SCRIPT_HOME_DIR + execScript);
 			if (scriptFile.exists()) {
-				printVerbose("Load Script[%s]: file:/%s", script, scriptFile.getAbsolutePath());
+				printVerbose("Load Script[%s]: file:/%s", execScript, scriptFile.getAbsolutePath());
 				content = IOUtils.toString(new FileInputStream(scriptFile), Charset.defaultCharset());
 			} else {
-				final InputStream asStream = getClass().getResourceAsStream("/scripts/" + script);
+				final InputStream asStream = getClass().getResourceAsStream("/scripts/" + execScript);
 				if (asStream != null) {
-					printVerbose("Load Script[%s]: classpath:/scripts/%s", script, script);
+					printVerbose("Load Script[%s]: classpath:/scripts/%s", execScript, execScript);
 					content = IOUtils.toString(asStream, Charset.defaultCharset());
 				} else {
-					error("Script Not Found: %s", script);
+					error("Script Not Found: %s", execScript);
 				}
 			}
 
@@ -139,26 +148,24 @@ public class CExec extends CAbstract {
 				}
 			}
 
-			if (content != null) {
-				final Map<String, Boolean> vars = findVarsInScript(content);
+			final Map<String, Boolean> vars = findVarsInScript(content);
 
-				for (Map.Entry<String, Boolean> entry : vars.entrySet()) {
-					final String var = entry.getKey();
-					final boolean required = entry.getValue();
-					if (!params.containsKey(var)) {
-						ask(var + ": ", s -> {
-							if (Strings.isNullOrEmpty(s) && required) {
-								error("Required Param: %s", var);
-							}
-							params.put(var, s != null ? s : "");
-						});
-					}
+			for (Map.Entry<String, Boolean> entry : vars.entrySet()) {
+				final String var = entry.getKey();
+				final boolean required = entry.getValue();
+				if (!params.containsKey(var)) {
+					ask(var + (required ? " (*): " : ": "), s -> {
+						if (Strings.isNullOrEmpty(s) && required) {
+							error("Required Param: %s", var);
+						}
+						params.put(var, s != null ? s : "");
+					});
 				}
+			}
 
-				for (Map.Entry<String, String> entry : params.entrySet()) {
-					content = content.replace("{{" + entry.getKey() + "}}", entry.getValue());
-					content = content.replace("{{" + entry.getKey() + "*}}", entry.getValue());
-				}
+			for (Map.Entry<String, String> entry : params.entrySet()) {
+				content = content.replace("{{" + entry.getKey() + "}}", entry.getValue());
+				content = content.replace("{{" + entry.getKey() + "*}}", entry.getValue());
 			}
 
 			return content;
@@ -167,23 +174,34 @@ public class CExec extends CAbstract {
 		}
 	}
 
-	private final static Pattern pattern = Pattern.compile("\\{\\{(\\w+?\\*?)}}");
+	private final static Pattern pattern = Pattern.compile("\\{\\{(.+?)}}");
 
 	private Map<String, Boolean> findVarsInScript(String content) {
-		final Map<String, Boolean> result = new HashMap<>();
+		final Map<String, Boolean> result = new LinkedHashMap<>();
 		final Matcher matcher = pattern.matcher(content);
 		while (matcher.find()) {
 			final String param = matcher.group(1);
 			if (param.endsWith("*")) {
 				result.put(param.substring(0, param.length() - 1), true);
-			} else if (!result.containsKey(param)) {
+			} else {
 				result.put(param, false);
 			}
 		}
 		return result;
 	}
 
-	private void install() {
+	private void installFile() {
+		try {
+			Files.createDirectories(Paths.get(SCRIPT_HOME_DIR));
+
+			final var dest = new File(SCRIPT_HOME_DIR + scriptFile.getName());
+			IOUtils.copy(new FileInputStream(scriptFile), new FileOutputStream(dest));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private void installOfClasspath() {
 		try {
 			Files.createDirectories(Paths.get(SCRIPT_HOME_DIR));
 
@@ -211,7 +229,7 @@ public class CExec extends CAbstract {
 		}
 	}
 
-	private void printList() {
+	/*private void printList() {
 		try {
 			final var scriptDir = Paths.get(SCRIPT_HOME_DIR);
 			if (Files.exists(scriptDir)) {
@@ -224,7 +242,7 @@ public class CExec extends CAbstract {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-	}
+	}*/
 
 	// ------------------------------
 
@@ -232,7 +250,7 @@ public class CExec extends CAbstract {
 
 		public ScriptListCompletion() {
 			super(Collections.singletonList(
-				String.format("$(%s %s %s)", CCompletion.TALOS_CMD, "exec", "-L")
+				String.format("$(ls %s)", SCRIPT_HOME_DIR)
 			));
 		}
 

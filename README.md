@@ -41,16 +41,25 @@ the root directory. Then `talos.sh` is created in both
 
 Note: for most of the commands, `-V` enables verbose.
 
-- `talos.sh scan <DIR>` - scans the `<DIR>` recursively and adds the VMs(`vmx` files) in the config.
-- `talos.sh ls [-U]` - lists all added VMs in the config
-  - `-U` deletes non-existed VMs from the config.
-- `talos.sh start VM [VM...]` - starts VM(s).
-- `talos.sh stop VM [VM...]` - stops VM(s).
-- `talos.sh clone VM NEW_VM` - creates a full clone.
-- `talos.sh ps` - lists running VMs and shows their IP address (needs `open-vm-tools` or `vmware-tools` installed in VMs).
-- `talos.sh ssh VM [-u USER] [-p PASSWORD] [-P]` - creates an SSH session to your VM
+- `scan <DIR>` - scans the `<DIR>` recursively and adds the VMs(`vmx` files) in the config
+- `ls [-U]` - lists all added VMs in the config
+  - `-U` deletes non-existed VMs from the config
+- `start VM [VM...]` - starts VM(s)
+- `stop [-f] VM [VM...]` - stops VM(s)
+- `restart [-f] VM [VM...]` - stops VM(s)
+- `clone VM NEW_VM` - creates a full clone
+- `ps` - lists running VMs and shows their IP address (needs `open-vm-tools` or `vmware-tools` installed in VMs)
+- `ssh VM [-u USER] [-p PASSWORD] [-P]` - creates an SSH session to your VM
   - `-P` persists the username and password in the config in plain text.
-- `talos.sh ssh VM1 VM2 [VM...]` - creates multi SSH shells with synchronized input to all sessions.
-- `talos.sh cp SRC DEST [-u USER] [-p PASSWORD] [-P]` - copies a file from `SRC` to `DEST`
-  - `SRC` or `DEST` is a simple `FILE` on the host or `VM:FILE` on the guest.
-  - `-P` persists the username and password in the config in plain text.
+- `ssh VM1 VM2 [VM...]` - creates multi SSH shells with synchronized input to all sessions
+- `cp SRC DEST [-u USER] [-p PASSWORD] [-P]` - copies a file from `SRC` to `DEST`
+  - `SRC` or `DEST` is a simple `FILE` on the host or `VM:FILE` on the guest
+  - `-P` persists the username and password in the config in plain text
+- `exec`
+  - `exec VM [-u USER] [-p PASSWORD] [-P] -- COMMAND`
+  - `exec --install-script SCRIPT_FILE` - install the file in `~/.talos/scripts`
+  - `exec --init` - install scripts embedded in the `talos.sh`
+  - `exec --edit-script SCRIPT` - edit `SCRIPT`
+  - `exec -l` - list all installed scripts
+  - `exec VM [-u USER] [-p PASSWORD] [-P] -s SCRIPT [-- P1=V1...]`
+    - `exec VM -s debian-set-net.sh -- ip= gateway= hostname= netmask= dns=`
