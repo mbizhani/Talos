@@ -29,6 +29,7 @@ public class TalosMain {
 			.addSubcommand(new CExec(context))
 			.addSubcommand(new CStart(context))
 			.addSubcommand(new CStop(context))
+			.addSubcommand(new CRestart(context))
 			.addSubcommand(new CRemove(context))
 			.addSubcommand(new CCompletion(line))
 			.addSubcommand(new CommandLine(new CSnapshot())

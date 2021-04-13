@@ -6,6 +6,7 @@ public enum VMCommand {
 	list,
 	start,
 	stop,
+	reset,
 
 	createDirectoryInGuest,
 	fileExistsInGuest,
