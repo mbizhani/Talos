@@ -24,9 +24,8 @@ public class Context {
 		this.file = configFile;
 
 		xStream = new XStream();
-		XStream.setupDefaultSecurity(xStream);
 		xStream.processAnnotations(XRoot.class);
-		xStream.allowTypesByWildcard(new String[]{"org.devocative.talos.**"});
+		xStream.allowTypesByWildcard(new String[]{"org.devocative.talos.xml.**"});
 
 		try {
 			if (configFile.exists()) {

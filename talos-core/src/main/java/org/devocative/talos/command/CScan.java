@@ -12,7 +12,7 @@ import java.nio.file.Files;
 @Command(name = "scan", description = "Scans a directory to find .vmx files")
 public class CScan extends CAbstract {
 
-	@Parameters(index = "0", paramLabel = "DIR", description = "Base directory to start scanning recursively")
+	@Parameters(arity = "0..1", index = "0", paramLabel = "DIR", description = "Base directory to start scanning recursively")
 	private File dir;
 
 	private int foundVmxFile = 0;
@@ -29,7 +29,7 @@ public class CScan extends CAbstract {
 	@Override
 	public void run() {
 		try {
-			final File file = dir.getCanonicalFile();
+			final File file = dir != null ? dir.getCanonicalFile() : new File(context.getCloneBaseDir());
 			if (!file.exists()) {
 				error("'%s' not exists", file.getAbsolutePath());
 			}
