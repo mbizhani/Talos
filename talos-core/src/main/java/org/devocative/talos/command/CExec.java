@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 public class CExec extends CAbstract {
 
 	@Parameters(index = "0", arity = "0", paramLabel = "VM_NAME", description = "Name of VM",
-		completionCandidates = VMListCompletion.class)
+		completionCandidates = ParamCompletion.VMListCompletion.class)
 	private String name;
 
 	@Parameters(index = "1..*", paramLabel = "CMD/SCRIPT_PARAMS", description = "Command/Params")

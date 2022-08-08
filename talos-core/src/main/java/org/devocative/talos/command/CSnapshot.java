@@ -13,7 +13,7 @@ public class CSnapshot {
 
 	private static abstract class ASnapshot extends CAbstract {
 		@Parameters(index = "0", paramLabel = "VM_NAME", description = "Name of VM",
-			completionCandidates = VMListCompletion.class)
+			completionCandidates = ParamCompletion.VMListCompletion.class)
 		protected String vmName;
 
 		protected ASnapshot(Context context) {
@@ -25,7 +25,7 @@ public class CSnapshot {
 
 	@Command(name = "create", description = "Create a Snapshot")
 	public static class Create extends ASnapshot {
-		@Parameters(arity = "0", index = "1", paramLabel = "NAME", description = "Snapshot Name")
+		@Parameters(arity = "1", index = "1", paramLabel = "NAME", description = "Snapshot Name")
 		private String snapshotName;
 
 		public Create(Context context) {
@@ -60,13 +60,14 @@ public class CSnapshot {
 				.vmxFile(vmx)
 				.call()
 				.getOutput();
-			System.out.println(output);
+			System.out.println(output.substring(output.indexOf("\n")).trim());
 		}
 	}
 
 	@Command(name = "rm", description = "Remove Snapshot(s)")
 	public static class Remove extends ASnapshot {
-		@Parameters(arity = "1", index = "1..*", paramLabel = "NAME(s)", description = "Snapshot Name(s)")
+		@Parameters(arity = "1", index = "1..*", paramLabel = "NAME(s)", description = "Snapshot Name(s)",
+			completionCandidates = ParamCompletion.SnapshotListCompletion.class)
 		private java.util.List<String> snapshotNames;
 
 		public Remove(Context context) {
@@ -90,7 +91,8 @@ public class CSnapshot {
 
 	@Command(name = "revert", description = "Revert to a Snapshot")
 	public static class Revert extends ASnapshot {
-		@Parameters(arity = "0", index = "1", paramLabel = "NAME", description = "Snapshot Name")
+		@Parameters(arity = "1", index = "1", paramLabel = "NAME", description = "Snapshot Name",
+			completionCandidates = ParamCompletion.SnapshotListCompletion.class)
 		private String snapshotName;
 
 		public Revert(Context context) {

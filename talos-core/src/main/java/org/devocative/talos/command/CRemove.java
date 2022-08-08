@@ -16,7 +16,7 @@ import java.util.List;
 public class CRemove extends CAbstract {
 
 	@Parameters(arity = "1", paramLabel = "VM_NAME(s)", description = "Name(s) of VM (use 'ls' command)",
-		completionCandidates = VMListCompletion.class)
+		completionCandidates = ParamCompletion.VMListCompletion.class)
 	private List<String> names;
 
 	@Option(names = {"-E", "--entirely"}, description = "Removes entirely all VM content")

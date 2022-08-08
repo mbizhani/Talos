@@ -16,7 +16,7 @@ import java.util.List;
 public class CSsh extends CAbstract {
 
 	@Parameters(arity = "1", paramLabel = "VM_NAME(s)", description = "Name of VM(s) (Two or more names shows multi ssh)",
-		completionCandidates = VMListCompletion.class)
+		completionCandidates = ParamCompletion.VMListCompletion.class)
 	private List<String> names;
 
 	@Option(names = {"-u", "--username"}, description = "VM login username")
